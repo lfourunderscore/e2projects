@@ -1,0 +1,121 @@
+@name Morecommands
+@inputs 
+@outputs 
+@persist Func:string S1:string S2:string S3:string Return:string ReturnFormat:string N1:normal N2:normal N3:normal
+@trigger 
+runOnChat(1)
+ReturnFormat = "hint"
+hideChat(0)
+
+function printL(Method:string, Phrase:string) {
+    if(Method == "chat") {
+        print(Phrase)
+    }
+    elseif(Method == "hint") {
+        hint(Phrase, 5)
+    }
+    else {
+        print("method \""+Method+"\" doesn't exist")
+    }
+}
+
+function resetVars(Strings, Normals, Other) {
+    if(Strings == 1) {
+        S1 = ""
+        S2 = ""
+        S3 = ""
+    }
+    if(Normals == 1) {
+        N1 = 0
+        N2 = 0
+        N3 = 0
+    }
+    if(Other) {
+        Return = ""
+        Func = ""
+        Chat = ""
+    }
+}
+resetVars(1,1,1)
+Chat = owner():lastSaid()
+
+Func = Chat:explode(" "):string(1)
+S1 = Chat:explode("\""):string(2)
+S2 = Chat:explode("\""):string(4)
+S3 = Chat:explode("\""):string(6)
+
+if(chatClk(owner())) {
+    if(Func == "/health") {
+        Return = findPlayerByName(S1):health():toString()
+        if(findPlayerByName(S1):isValid()){
+            printL(ReturnFormat,Return)
+            resetVars(0,0,1)
+        }
+        else {
+            printL(ReturnFormat, "bad target \""+S1+"\"")
+        }
+    }
+    
+    if(Func == "/distance") {
+        Return = findPlayerByName(S1):pos():distance(findPlayerByName(S2):pos()):toString()
+        if(findPlayerByName(S1):isValid()){
+            if(findPlayerByName(S2):isValid()){
+                printL(ReturnFormat,Return)
+                resetVars(0,0,1)
+            }
+            else{
+                print("bad target \""+S2+"\"")
+            }
+        }
+        else {
+            printL(ReturnFormat, "bad target \""+S1+"\"")
+        }
+    }
+    
+    if(Func == "/underwater") {
+        Return = findPlayerByName(S1):isUnderWater():toString()
+        if(findPlayerByName(S1):isValid()){
+            printL(ReturnFormat,Return)
+            resetVars(0,0,1)
+        }
+        else {
+            printL(ReturnFormat, "bad target \""+S1+"\"")
+        }
+    }
+    
+    if(Func == "/onfire") {
+        Return = findPlayerByName(S1):isOnFire():toString()
+        if(findPlayerByName(S1):isValid()){
+            printL(ReturnFormat,Return)
+            resetVars(0,0,1)
+        }
+        else {
+            printL(ReturnFormat, "bad target \""+S1+"\"")
+        }
+    }
+    
+    if(Func == "/position") {
+        Return = round(findPlayerByName(S1):pos(), 2):toString()
+        if(findPlayerByName(S1):isValid()){
+            printL(ReturnFormat,Return)
+            resetVars(0,0,1)
+        }
+        else {
+            printL(ReturnFormat, "bad target \""+S1+"\"")
+        }
+    }
+    
+    if(Func == "/goto") {
+        if(findPlayerByName(S1):isValid()){
+            resetVars(0,1,0)
+            N1 = findPlayerByName(S1):pos():x()
+            N2 = findPlayerByName(S1):pos():y()
+            N3 = findPlayerByName(S1):pos():z() + findPlayerByName(S1):height() + 10
+            concmd("setpos "+N1+" "+N2+" "+N3)
+            resetVars(0,0,1)
+        }
+        else {
+            printL(ReturnFormat, "bad target \""+S1+"\"")
+        }
+    }
+}
